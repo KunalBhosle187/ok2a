@@ -1,0 +1,34 @@
+[
+  {
+    "input": "How many open issues are associated with each asset?",
+    "query": "SELECT a.asset_name, COUNT(ca.asset_issue_id) AS open_issue_count FROM asset AS a LEFT JOIN current_asset_issues AS ca ON a.asset_id = ca.fk_asset_id AND ca.issue_status = 'Open' GROUP BY a.asset_name;"
+  },
+  {
+    "input": "Which assets have not been assigned any issues?",
+    "query": "SELECT a.asset_name FROM asset AS a LEFT JOIN unique_asset_issues AS ua ON a.asset_id = ua.fk_asset_id WHERE ua.fk_asset_id IS NULL;"
+  },
+  {
+    "input": "Who are the users with their corresponding designations?",
+    "query": "SELECT username, designation FROM user;"
+  },
+  {
+    "input": "Which assets are associated with high-risk issues?",
+    "query": "SELECT a.asset_name, mi.issue_name FROM asset AS a JOIN unique_asset_issues AS ua ON a.asset_id = ua.fk_asset_id JOIN master_issues AS mi ON ua.fk_master_issue_id = mi.issue_id JOIN master_risk_ratings_values AS mrv ON mi.issue_riskrating = mrv.id WHERE mrv.name = 'High';"
+  },
+  {
+    "input": "How many issues of each risk rating are currently open?",
+    "query": "SELECT mrv.name AS risk_rating_name, COUNT(ua.asset_issue_id) AS open_issue_count FROM master_issues AS mi LEFT JOIN unique_asset_issues AS ua ON mi.issue_id = ua.fk_master_issue_id AND ua.issue_status = 'Open' JOIN master_risk_ratings_values AS mrv ON mi.issue_riskrating = mrv.id GROUP BY mi.issue_riskrating;"
+  },
+  {
+    "input": "What is the most common risk rating among the issues?",
+    "query": "SELECT mrv.name AS risk_rating_name, COUNT(*) AS issue_count FROM master_issues AS mi JOIN unique_asset_issues AS ua ON mi.issue_id = ua.fk_master_issue_id JOIN master_risk_ratings_values AS mrv ON mi.issue_riskrating = mrv.id GROUP BY mi.issue_riskrating ORDER BY issue_count DESC LIMIT 1;"
+  },
+  {
+    "input": "Which users have submitted requests and what is the status of their requests?",
+    "query": "SELECT u.fullname AS user_name, r.request_status FROM user AS u JOIN request AS r ON u.id = r.fk_requested_by;"
+  },
+  {
+    "input": "How many test requests are in initial stage?",
+    "query": "SELECT COUNT(*) AS initial_stage_test_requests FROM security_test_request WHERE test_stage = 'Initial';"
+  }
+]
